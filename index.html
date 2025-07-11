@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Moving Boxes</title>
+</head>
+<body bgcolor="orange">
+    <div class="box" id="box1"></div>
+    <div class="box" id="box2"></div>
+	<div class="box" id="box3"></div>
+    <div class="box" id="box4"></div>
+
+    <script>
+        const boxes = document.querySelectorAll('.box');
+        let positions = [0, 50, 30, 60]; // Initial horizontal positions for the boxes
+        let directions = [9, -10, -5, 5]; // Horizontal speeds for each box
+        let verticalPositions = [100, 300, 100, 250]; // Initial vertical positions for the boxes
+        let verticalDirections = [2, -6, 7, 1]; // Vertical speeds for each box
+
+        const moveBoxes = () => {
+            requestAnimationFrame(moveBoxes);
+            for (let i = 0; i < boxes.length; i++) {
+                positions[i] += directions[i]; // Horizontal movement
+                verticalPositions[i] += verticalDirections[i]; // Vertical movement
+                boxes[i].style.left = positions[i] + 'px'; // Update horizontal position
+                boxes[i].style.top = verticalPositions[i] + 'px'; // Update vertical position
+
+                // Bounce off the horizontal edges
+                if (positions[i] + boxes[i].offsetWidth >= window.innerWidth || positions[i] <= 0) {
+                    directions[i] *= -1; // Reverse horizontal direction on collision
+                }
+                // Bounce off the vertical edges
+                if (verticalPositions[i] + boxes[i].offsetHeight >= window.innerHeight || verticalPositions[i] <= 0) {
+                    verticalDirections[i] *= -1; // Reverse vertical direction on collision
+                }
+
+                // Check for collisions between boxes
+                for (let j = 0; j < boxes.length; j++) {
+                    if (i !== j && isColliding(boxes[i], boxes[j])) {
+                        directions[i] *= -1; // Reverse direction on collision
+                        directions[j] *= -1; // Reverse direction on collision
+                    }
+                }
+            }
+        };
+
+        const isColliding = (boxA, boxB) => {
+            const rectA = boxA.getBoundingClientRect();
+            const rectB = boxB.getBoundingClientRect();
+
+            return !(
+                rectA.top > rectB.bottom ||
+                rectA.bottom < rectB.top ||
+                rectA.right < rectB.left ||
+                rectA.left > rectB.right
+            );
+        };
+
+        moveBoxes(); // Start the movement
+    </script>
+</body>
+</html>
+</create_file>
